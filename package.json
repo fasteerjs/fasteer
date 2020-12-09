@@ -21,6 +21,7 @@
     "email": "vottus@vott.us"
   },
   "license": "MIT",
+  "private": false,
   "dependencies": {
     "chalk": "^4.1.0",
     "fastify": "^3.8.0",
