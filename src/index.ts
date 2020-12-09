@@ -1,5 +1,5 @@
 import { FasteerInstance } from "./FasteerInstance"
-import { useControllers } from "./hooks/useControllers"
+import { useControllers, ctrl } from "./hooks/useControllers"
 import { useWinston } from "./hooks/useWinston"
 import { hookFastify } from "./init/hookFastify"
 import Fasteer from "./types/fasteer"
@@ -21,4 +21,5 @@ export {
   hookFastify,
   FasteerFactory,
   WinstonFactory,
+  ctrl,
 }

@@ -7,6 +7,20 @@ import { withFasteer } from "../helpers"
 import F from "../types/fasteer"
 
 /**
+ * RequireJS Compatibility helper
+ *
+ * Function for cross-compatibility with require()
+ *
+ * Usage:
+ *  module.exports = ctrl((fastify) => {}, "/")
+ */
+export const ctrl = (controller: F.FCtrl, routePrefix?: string) => ({
+  default: controller,
+  routePrefix,
+  __requireModule: true,
+})
+
+/**
  * UseController Hook
  *
  * Registers all controller paths from given paths.
@@ -36,7 +50,17 @@ export const useControllers = fp(
        */
       for (const controller of controllers) {
         const parsedPath = path.parse(controller)
-        const ctrl = (await import(controller)) as F.ControllerImport
+        let ctrl = (await import(controller)) as F.ControllerImport
+
+        /**
+         * When using RequireJS, a ctrl() function is provided
+         * that adds an additional __requireModule property to let useControllers
+         * know that this is a RequireJS export and to use it accordingly.
+         */
+        if (ctrl.__requireModule) {
+          ctrl = Object.assign({}, ctrl)
+          ctrl.default = (ctrl as any).default.default
+        }
 
         /**
          * Controller has a default export that is a function with the following signature:
