@@ -1,6 +1,6 @@
 # Fasteer.js
 
-Small library too bootstrap Fastify in your Node.js project built with TypeScript.
+Small library to bootstrap Fastify in your Node.js project built with TypeScript.
 
 ## Getting Started
 
@@ -14,7 +14,7 @@ $ npm i @fasteerjs/fasteer
 $ yarn add @fasteerjs/fasteer
 ```
 
-### Initializition
+### Initialization
 
 You can add Fasteer with the hookFastify() function.
 
@@ -33,7 +33,7 @@ fasteer
   .catch(error => console.log(error))
 ```
 
-And that is all! You can even hook Fasteer to an existing Fastify instance
+And that is all! You can even hook Fasteer to an existing Fastify instance.
 
 ```ts
 import { hookFastify } from "@fasteerjs/fasteer"
@@ -183,7 +183,7 @@ const routePrefix = "/require-js"
 module.exports = ctrl(RequireJsController, routePrefix)
 ```
 
-or you can inline the controller, giving you type definitions:
+Or you can inline the controller, giving you type definitions:
 
 `controllers/RequireJsController.js`
  
