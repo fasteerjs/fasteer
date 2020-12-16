@@ -327,6 +327,8 @@ Enables or disables the development mode. When enabled, additional debug informa
   - https://github.com/fastify
 - Glob
   - https://github.com/isaacs/node-glob
+- Chalk
+  - https://github.com/chalk/chalk
 
 # License
 
