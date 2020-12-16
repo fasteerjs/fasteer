@@ -51,6 +51,61 @@ const fasteer = hookFastify(
 // ...
 ```
 
+## Controllers
+
+### Importing controllers
+
+#### When using Fasteer
+
+All controllers are registered via the `controllers` property in options passed to the `hookFastify` function
+
+For example: 
+```ts
+import path from "path"
+import { hookFastify } from "@fasteerjs/fasteer"
+
+const app = hookFastify({
+  controllers: [
+    path.join(__dirname, "controllers", "YourController.ts") // Registering a Specific Controller
+    path.join(__dirname, "controllers", "*Controller.ts") // Registering all *Controller.ts files under the controllers folder
+  ]
+})
+```
+You can use any glob syntax while defining a path for a controller, as Fasteer uses Glob under the hood.
+
+#### Standalone
+
+If you only want to use Fasteer's Controllers, you can use the `useControllers` hook.
+
+For example:
+```ts
+import path from "path"
+import { useControllers } from "@fasteerjs/fasteer"
+import fastify from "fastify"
+
+const app = fastify()
+
+useControllers(app, {
+  controllers: [
+    path.join(__dirname, "controllers", "YourController.ts") // Registering a Specific Controller
+    path.join(__dirname, "controllers", "*Controller.ts") // Registering all *Controller.ts files under the controllers folder
+  ]
+})
+```
+Of course you can also define a global route prefix for all controllers as you can accomplish with hookFastify.
+You just need to pass the `globalPrefix` property to the options
+```ts
+// ...
+
+useControllers(app, {
+  controllers: [ 
+    // ...
+  ],
+  globalPrefix: "/api"
+})
+```
+this will prefix all registered controller's routes with `/api`.
+
 ## Available Options
 
 These are all the available configuration options.
