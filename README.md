@@ -106,6 +106,95 @@ useControllers(app, {
 ```
 this will prefix all registered controller's routes with `/api`.
 
+
+
+### Defining controllers
+
+Defining a controller is as easy as exporting a function. No really, look!
+
+<br>
+
+`controllers/YourController.ts`
+ 
+```ts
+import { Fasteer } from "@fasteerjs/fasteer"
+
+// Fasteer.FCtrl is a shortcut for Fasteer.FunctionalController
+const YourController: Fasteer.FCtrl = (fastify) => {
+  fastify.get("/", (req, res) => res.send("Hello World"))
+}
+
+export default YourController
+```
+
+And we have created a `YourController` with a route `GET /` that responds with `Hello World`!
+
+You may also want to have a route prefix for the controller. For example an AuthController can have a `/auth` route prefix for each endpoint.
+This can be easily achievable by exporting `routePrefix` like so:
+```ts
+export const routePrefix = "/your"
+```
+
+This will make all of YourController's routes be prefixed with "/your", meaning that our `GET /` route is now at `/your`. Additionally, if you've defined a global route prefix, it will be used as well, for example `/api/your` if your global prefix is `/api`.
+
+
+#### JavaScript
+
+Fasteer, although written in TypeScript, is on NPM is compiled to JavaScript (with TypeScript declarations), and is compatible with normal JavaScript as well!
+
+<br/>
+
+##### ES6 Modules
+
+If you use ES6 modules, the usage isn't any different than with TypeScript. You just omit the type.
+
+`controllers/AnotherController.js`
+ 
+```js
+const AnotherController = (fastify) => {
+  fastify.get("/", (req, res) => res.send("Hallo Welt"))
+}
+
+export const routePrefix = "/another"
+
+export default AnotherController
+```
+
+
+##### RequireJS
+
+If you use RequireJS in your project, you'll need to use the `ctrl` helper provided by Fasteer. The `routePrefix` can be defined in the second parameter of the helper function.
+
+<br/>
+
+This helper function is in place due to the difference between how ES6 and RequireJS work.
+
+`controllers/RequireJsController.js`
+ 
+```js
+const { ctrl } = require("@fasteerjs/fasteer")
+
+const RequireJsController = (fastify) => {
+  fastify.get("/", (req, res) => res.send("Ahoj světe"))
+}
+
+const routePrefix = "/require-js"
+
+module.exports = ctrl(RequireJsController, routePrefix)
+```
+
+or you can inline the controller, giving you type definitions:
+
+`controllers/RequireJsController.js`
+ 
+```js
+const { ctrl } = require("@fasteerjs/fasteer")
+
+module.exports = ctrl((fastify) => {
+  fastify.get("/", (req, res) => res.send("Ahoj světe"))
+}, "/require-js")
+```
+
 ## Available Options
 
 These are all the available configuration options.
