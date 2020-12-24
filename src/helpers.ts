@@ -10,13 +10,24 @@ export const formatStatusCode = (statusCode = 200) => {
   return chalk.greenBright(status)
 }
 
+export const safeParseJson = (...args: Parameters<typeof JSON.parse>) => {
+  try {
+    return JSON.parse(...args)
+  } catch (_) {
+    return null
+  }
+}
+
 // https://github.com/VottusCode/morgan-body/blob/v3/src/formatter/JsonFormatter.ts
 export const formatJson = (
   obj: Record<string, any> | string,
   enableColors = true,
   minify = false
 ) => {
-  obj = typeof obj === "string" ? JSON.parse(obj) : obj
+  const parsed = typeof obj === "string" ? safeParseJson(obj) : obj
+  if (!parsed) return obj
+
+  obj = parsed
   const json = minify ? JSON.stringify(obj, null) : JSON.stringify(obj, null, 2)
 
   const formatMatch = (match: string, type: string) => {
