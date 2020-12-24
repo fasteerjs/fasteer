@@ -6,7 +6,7 @@ import Fasteer from "../types/fasteer"
 import WinstonFactory from "../factory/WinstonFactory"
 import { FasteerFactory } from "../factory/FasteerFactory"
 import useWinston from "../hooks/useWinston"
-import { withFasteer } from "../helpers"
+import { formatJson, withFasteer } from "../helpers"
 
 /**
  * HookFastify
@@ -25,6 +25,7 @@ export const hookFastify = (
     host = "127.0.0.1",
     loggerOptions,
     logRequests,
+    logErrors = true,
   }: Fasteer.Config,
   app = fastify()
 ) => {
@@ -38,19 +39,27 @@ export const hookFastify = (
   app.setErrorHandler(
     errorHandler
       ? errorHandler
-      : (err, _, res) => {
+      : (err, req, res) => {
+          logger.error(
+            withFasteer("Error occurred processing route", req.method, req.url)
+          )
+
+          if (logErrors) logger.error(withFasteer(err.stack))
+
           res
             .status(
-              res.statusCode ? res.statusCode : err.validation ? 419 : 500
+              res.statusCode ? res.statusCode : err.validation ? 400 : 500
             )
             .send({
               httpCode: res.statusCode
                 ? res.statusCode
                 : err.validation
-                ? 419
+                ? 400
                 : 500,
               message: err.validation
                 ? "Validation Error"
+                : err.statusCode
+                ? err.message
                 : development
                 ? err.message
                 : "Internal Server Error",

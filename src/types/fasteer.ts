@@ -76,6 +76,7 @@ export namespace Fasteer {
     host?: string
     loggerOptions?: LoggerOptions
     logRequests?: boolean
+    logErrors?: boolean
   }
 
   /**
