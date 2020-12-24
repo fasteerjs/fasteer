@@ -59,7 +59,8 @@ const fasteer = hookFastify(
 
 All controllers are registered via the `controllers` property in options passed to the `hookFastify` function
 
-For example: 
+For example:
+
 ```ts
 import path from "path"
 import { hookFastify } from "@fasteerjs/fasteer"
@@ -71,6 +72,7 @@ const app = hookFastify({
   ]
 })
 ```
+
 You can use any glob syntax while defining a path for a controller, as Fasteer uses Glob under the hood.
 
 #### Standalone
@@ -78,6 +80,7 @@ You can use any glob syntax while defining a path for a controller, as Fasteer u
 If you only want to use Fasteer's Controllers, you can use the `useControllers` hook.
 
 For example:
+
 ```ts
 import path from "path"
 import { useControllers } from "@fasteerjs/fasteer"
@@ -92,21 +95,22 @@ useControllers(app, {
   ]
 })
 ```
+
 Of course you can also define a global route prefix for all controllers as you can accomplish with hookFastify.
 You just need to pass the `globalPrefix` property to the options
+
 ```ts
 // ...
 
 useControllers(app, {
-  controllers: [ 
+  controllers: [
     // ...
   ],
-  globalPrefix: "/api"
+  globalPrefix: "/api",
 })
 ```
+
 this will prefix all registered controller's routes with `/api`.
-
-
 
 ### Defining controllers
 
@@ -115,12 +119,12 @@ Defining a controller is as easy as exporting a function. No really, look!
 <br>
 
 `controllers/YourController.ts`
- 
+
 ```ts
 import { Fasteer } from "@fasteerjs/fasteer"
 
 // Fasteer.FCtrl is a shortcut for Fasteer.FunctionalController
-const YourController: Fasteer.FCtrl = (fastify) => {
+const YourController: Fasteer.FCtrl = fastify => {
   fastify.get("/", (req, res) => res.send("Hello World"))
 }
 
@@ -131,12 +135,12 @@ And we have created a `YourController` with a route `GET /` that responds with `
 
 You may also want to have a route prefix for the controller. For example an AuthController can have a `/auth` route prefix for each endpoint.
 This can be easily achievable by exporting `routePrefix` like so:
+
 ```ts
 export const routePrefix = "/your"
 ```
 
 This will make all of YourController's routes be prefixed with "/your", meaning that our `GET /` route is now at `/your`. Additionally, if you've defined a global route prefix, it will be used as well, for example `/api/your` if your global prefix is `/api`.
-
 
 #### JavaScript
 
@@ -149,9 +153,9 @@ Fasteer, although written in TypeScript, is on NPM is compiled to JavaScript (wi
 If you use ES6 modules, the usage isn't any different than with TypeScript. You just omit the type.
 
 `controllers/AnotherController.js`
- 
+
 ```js
-const AnotherController = (fastify) => {
+const AnotherController = fastify => {
   fastify.get("/", (req, res) => res.send("Hallo Welt"))
 }
 
@@ -159,7 +163,6 @@ export const routePrefix = "/another"
 
 export default AnotherController
 ```
-
 
 ##### RequireJS
 
@@ -170,11 +173,11 @@ If you use RequireJS in your project, you'll need to use the `ctrl` helper provi
 This helper function is in place due to the difference between how ES6 and RequireJS work.
 
 `controllers/RequireJsController.js`
- 
+
 ```js
 const { ctrl } = require("@fasteerjs/fasteer")
 
-const RequireJsController = (fastify) => {
+const RequireJsController = fastify => {
   fastify.get("/", (req, res) => res.send("Ahoj světe"))
 }
 
@@ -186,11 +189,11 @@ module.exports = ctrl(RequireJsController, routePrefix)
 Or you can inline the controller, giving you type definitions:
 
 `controllers/RequireJsController.js`
- 
+
 ```js
 const { ctrl } = require("@fasteerjs/fasteer")
 
-module.exports = ctrl((fastify) => {
+module.exports = ctrl(fastify => {
   fastify.get("/", (req, res) => res.send("Ahoj světe"))
 }, "/require-js")
 ```

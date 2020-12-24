@@ -6,7 +6,7 @@ import Fasteer from "../types/fasteer"
 import WinstonFactory from "../factory/WinstonFactory"
 import { FasteerFactory } from "../factory/FasteerFactory"
 import useWinston from "../hooks/useWinston"
-import { formatJson, withFasteer } from "../helpers"
+import { withFasteer } from "../helpers"
 
 /**
  * HookFastify
