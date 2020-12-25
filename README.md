@@ -270,7 +270,7 @@ Adds to a global prefix to controller routes. For example if you set globalPref
 cors?: boolean | string
 ```
 
-Enables the `fastify-cors` plugin. By default it is `false`. When set to a string, it sets the value of the `Access-Control-Allow-Origin` header.
+Enables the `fastify-cors` plugin. by default it is `false`. Setting it to a boolean either enables it with default settings or disables it. You can also pass an object which is settings for the fastify-cors plugin, for more information see [fastify-cors README](https://github.com/fastify/fastify-cors#options).
 
 Examples:
 
@@ -289,7 +289,7 @@ cors: "domain.tld" // Access-Control-Allow-Origin: domain.tld
 helmet?: boolean | Parameters<typeof helmet>[0]
 ```
 
-Enables the `fastify-helmet` plugin. by default it is `false`. Setting it to a boolean either enables it with default settings or disables it. You can also pass an object which is settings for helmet, for more information see [helmet documentation](https://helmetjs.github.io/).
+Enables the `fastify-helmet` plugin. by default it is `false`. Setting it to a boolean either enables it with default settings or disables it. You can also pass an object which is settings for the fastify-helmet plugin, for more information see [helmet documentation](https://helmetjs.github.io/).
 
 ### Error Handler
 
