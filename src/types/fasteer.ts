@@ -4,9 +4,12 @@ import {
   FastifyError,
   FastifyInstance,
 } from "fastify"
+import { FastifyCorsOptions } from "fastify-cors"
 import helmet from "helmet"
 import { Logger, LoggerOptions } from "winston"
 import FasteerInstance from "../FasteerInstance"
+
+export type FastifyHelmetOptions = Parameters<typeof helmet>[0]
 
 /**
  * Fasteer Typings
@@ -63,8 +66,8 @@ export namespace Fasteer {
   export interface Config {
     controllers: string | string[]
     globalPrefix?: string
-    cors?: boolean | string
-    helmet?: boolean | Parameters<typeof helmet>[0]
+    cors?: boolean | FastifyCorsOptions
+    helmet?: boolean | FastifyHelmetOptions
     errorHandler?: (
       this: FastifyInstance,
       error: FastifyError,

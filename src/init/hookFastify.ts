@@ -71,9 +71,7 @@ export const hookFastify = (
 
   if (cors) {
     console.log(withFasteer("Registering CORS"))
-    app.register(fastifyCors, {
-      origin: typeof cors === "string" ? cors : undefined,
-    })
+    cors === true ? app.register(fastifyCors) : app.register(fastifyCors, cors)
   }
   if (helmet) {
     console.log(withFasteer("Registering Helmet"))
