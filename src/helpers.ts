@@ -20,10 +20,12 @@ export const safeParseJson = (...args: Parameters<typeof JSON.parse>) => {
 
 // https://github.com/VottusCode/morgan-body/blob/v3/src/formatter/JsonFormatter.ts
 export const formatJson = (
-  obj: Record<string, any> | string,
+  obj: unknown,
   enableColors = true,
   minify = false
 ) => {
+  if (!obj) return obj
+
   const parsed = typeof obj === "string" ? safeParseJson(obj) : obj
   if (!parsed) return obj
 

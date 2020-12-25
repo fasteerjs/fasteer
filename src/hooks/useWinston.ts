@@ -25,18 +25,11 @@ export const useWinston = fp(async (fastify, { winston }: F.UseWinston) => {
         `(${req.ip})`
       )
     )
-    if (req.body) {
-      winston.info(
-        `${whiteBright("Request:")}\n` +
-          (String(res.getHeaders()["Content-Type"]) === "application/json" &&
-          req.body instanceof Object
-            ? formatJson(req.body)
-            : req.body)
-      )
-    }
-    if (payload) {
+    if (req.body)
+      winston.info(`${whiteBright("Request:")}\n` + formatJson(req.body))
+
+    if (payload)
       winston.info(`${whiteBright("Response:")}\n` + formatJson(payload))
-    }
   })
 
   return winston
