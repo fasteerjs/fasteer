@@ -16,6 +16,7 @@ import { withFasteer } from "../helpers"
 export const hookFastify = (
   {
     controllers = [],
+    controllerContext = {},
     globalPrefix = "/",
     cors = false,
     helmet = false,
@@ -81,7 +82,11 @@ export const hookFastify = (
     console.log(withFasteer("Registering a Request Logger hook"))
     app.register(useWinston, { winston: logger })
   }
-  app.register(useControllers, { controllers, globalPrefix })
+  app.register(useControllers, {
+    controllers,
+    globalPrefix,
+    context: controllerContext,
+  })
 
   return FasteerFactory.create(app, { port, host, logger })
 }

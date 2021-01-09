@@ -31,7 +31,10 @@ export const ctrl = (controller: F.FCtrl, routePrefix?: string) => ({
  *  - http/controllers/*Controller.ts
  */
 export const useControllers = fp(
-  async (fastify, { controllers, globalPrefix = "/" }: F.UseControllers) => {
+  async (
+    fastify,
+    { controllers, globalPrefix = "/", context }: F.UseControllers
+  ) => {
     controllers = typeof controllers === "string" ? [controllers] : controllers
 
     const log = (...log: any[]) =>
@@ -85,6 +88,7 @@ export const useControllers = fp(
          */
         fastify.register(ctrl.default, {
           prefix: path.join(globalPrefix, ctrl.routePrefix ?? ""),
+          ctx: context,
         })
 
         console.log(

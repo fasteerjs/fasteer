@@ -248,6 +248,54 @@ controllers: [
 ]
 ```
 
+### Controller Context
+
+(Required)
+<br>
+
+```ts
+controllerPrefix?: object
+```
+
+You can set a context to all controllers, which controllers can access
+via the ctx property in the second param.
+
+Example:
+
+```ts
+// main.ts
+const controllerContext = {
+  hello: "world",
+}
+
+export type ControllerContext = typeof controllerContext
+
+const fasteer = hookFastify({
+  controllers: ["YourController.ts"],
+  controllerContext,
+})
+
+// YourController.ts
+const Controller: Fasteer.FCtrl = (
+  fastify,
+  { ctx }: F.Ctx<ControllerContext>
+) => {
+  console.log(ctx.hello)
+  // "world"
+}
+```
+
+<br>
+
+Example:
+
+```ts
+controllers: [
+  path.join(__dirname, "controllers", "**", "*.ts"),
+  path.join(__dirname, "SpecialController.ts"),
+]
+```
+
 ### Global Prefix
 
 (Optional)

@@ -21,7 +21,7 @@ export namespace Fasteer {
   export interface ControllerImport<
     TFastify extends FastifyInstance = FastifyInstance
   > {
-    default: (fastify: TFastify) => any
+    default: (fastify: TFastify, opts: { ctx: any }) => any
     routePrefix?: string
     __requireModule?: true
   }
@@ -65,6 +65,7 @@ export namespace Fasteer {
    */
   export interface Config {
     controllers: string | string[]
+    controllerContext?: object
     globalPrefix?: string
     cors?: boolean | FastifyCorsOptions
     helmet?: boolean | FastifyHelmetOptions
@@ -80,6 +81,10 @@ export namespace Fasteer {
     loggerOptions?: LoggerOptions
     logRequests?: boolean
     logErrors?: boolean
+  }
+
+  export interface Ctx<TContext extends object> {
+    ctx: TContext
   }
 
   /**
@@ -98,6 +103,7 @@ export namespace Fasteer {
   export interface UseControllers {
     controllers: string | string[]
     globalPrefix?: string
+    context: object
   }
 
   /**
