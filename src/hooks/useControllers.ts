@@ -108,10 +108,11 @@ export const useControllers = fp(
      */
     for (const controller of allControllers) {
       if (typeof controller === "object") {
-        const name =
-          controller.default.name === ""
-            ? "(anonymous controller)"
-            : controller.default.name
+        const name = (controller.default as any).controllerName
+          ? (controller.default as any).controllerName
+          : controller.default.name === ""
+          ? "(anonymous controller)"
+          : controller.default.name
 
         if (controller.__requireModule) {
           delete controller.__requireModule
