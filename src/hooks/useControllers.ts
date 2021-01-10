@@ -17,7 +17,7 @@ import F from "../types/fasteer"
 export const ctrl = (controller: F.FCtrl, routePrefix?: string) => ({
   default: controller,
   routePrefix,
-  __requireModule: true,
+  __requireModule: true as true,
 })
 
 /**
@@ -35,72 +35,95 @@ export const useControllers = fp(
     fastify,
     { controllers, globalPrefix = "/", context }: F.UseControllers
   ) => {
-    controllers = typeof controllers === "string" ? [controllers] : controllers
+    controllers = !(controllers instanceof Array) ? [controllers] : controllers
+
+    const registerController = async (
+      ctrl: F.ControllerImport,
+      name: string
+    ) => {
+      /**
+       * When using RequireJS, a ctrl() function is provided
+       * that adds an additional __requireModule property to let useControllers
+       * know that this is a RequireJS export and to use it accordingly.
+       */
+      if (ctrl.__requireModule) {
+        ctrl = Object.assign({}, ctrl)
+        ctrl.default = (ctrl as any).default.default
+      }
+
+      /**
+       * Controller has a default export that is a function with the following signature:
+       *  async (fastify: FastifyInstance) => any
+       */
+      if (!ctrl.default || typeof ctrl.default !== "function") {
+        console.warn(
+          log(
+            `Controller ${name} does not have a default export or it is not a function. Skipping...`
+          )
+        )
+        return
+      }
+
+      /**
+       * Controllers usually have a prefix, eg. Auth Controller
+       * has an /auth route prefix.
+       * By exporting a String constant routePrefix, you define that prefix
+       */
+      fastify.register(ctrl.default, {
+        prefix: path.join(globalPrefix, ctrl.routePrefix ?? ""),
+        ctx: context,
+      })
+
+      console.log(
+        log(
+          `${name} ${
+            ctrl.routePrefix
+              ? `(${path.join(globalPrefix, ctrl.routePrefix ?? "")}) `
+              : ""
+          }registered`
+        )
+      )
+    }
 
     const log = (...log: any[]) =>
       withFasteer(blueBright("[useControllers]"), ...log)
 
-    for (const controllerPath of controllers) {
-      console.info(log("Looking up path", controllerPath))
-      const controllers = glob.sync(controllerPath)
+    let allControllers: (F.ControllerImport | string)[] = []
 
-      /**
-       * Fasteer imports the controller file using ES6 imports.
-       * Controllers need to have a default function export, which has the following signature:
-       *  (fastify: FastifyInstance) => any
-       *
-       * Additionally, a string export "routePrefix" sets a prefix for the following controller.
-       */
-      for (const controller of controllers) {
-        const parsedPath = path.parse(controller)
-        let ctrl = (await import(controller)) as F.ControllerImport
-
-        /**
-         * When using RequireJS, a ctrl() function is provided
-         * that adds an additional __requireModule property to let useControllers
-         * know that this is a RequireJS export and to use it accordingly.
-         */
-        if (ctrl.__requireModule) {
-          ctrl = Object.assign({}, ctrl)
-          ctrl.default = (ctrl as any).default.default
-        }
-
-        /**
-         * Controller has a default export that is a function with the following signature:
-         *  async (fastify: FastifyInstance) => any
-         */
-        if (!ctrl.default || typeof ctrl.default !== "function") {
-          console.warn(
-            log(
-              `Controller ${parsedPath.base.replace(
-                parsedPath.ext,
-                ""
-              )} does not have a default export or it is not a function. Skipping...`
-            )
-          )
-          continue
-        }
-
-        /**
-         * Controllers usually have a prefix, eg. Auth Controller
-         * has an /auth route prefix.
-         * By exporting a String constant routePrefix, you define that prefix
-         */
-        fastify.register(ctrl.default, {
-          prefix: path.join(globalPrefix, ctrl.routePrefix ?? ""),
-          ctx: context,
-        })
-
-        console.log(
-          log(
-            `${parsedPath.base.replace(parsedPath.ext, "")} ${
-              ctrl.routePrefix
-                ? `(${path.join(globalPrefix, ctrl.routePrefix ?? "")})`
-                : ""
-            } registered`
-          )
-        )
+    for (const controller of controllers) {
+      if (typeof controller !== "string") {
+        allControllers.push(controller)
+        continue
       }
+
+      console.info(log("Looking up path", controller))
+      allControllers = [...allControllers, ...glob.sync(controller)]
+    }
+    /**
+     * Fasteer imports the controller file using ES6 imports.
+     * Controllers need to have a default function export, which has the following signature:
+     *  (fastify: FastifyInstance) => any
+     *
+     * Additionally, a string export "routePrefix" sets a prefix for the following controller.
+     */
+    for (const controller of allControllers) {
+      if (typeof controller === "object") {
+        const name =
+          controller.default.name === ""
+            ? "(anonymous controller)"
+            : controller.default.name
+
+        if (controller.__requireModule) {
+          delete controller.__requireModule
+        }
+
+        await registerController(controller, name)
+        continue
+      }
+      await registerController(
+        await import(controller),
+        path.parse(controller).name
+      )
     }
   }
 )

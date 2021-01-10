@@ -64,7 +64,7 @@ export namespace Fasteer {
    * Configuration for init hookFastify()
    */
   export interface Config {
-    controllers: string | string[]
+    controllers: UseControllers["controllers"]
     controllerContext?: object
     globalPrefix?: string
     cors?: boolean | FastifyCorsOptions
@@ -101,7 +101,7 @@ export namespace Fasteer {
    * Options for useControllers() hook
    */
   export interface UseControllers {
-    controllers: string | string[]
+    controllers: string | ControllerImport | (string | ControllerImport)[]
     globalPrefix?: string
     context: object
   }
