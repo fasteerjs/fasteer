@@ -1,7 +1,7 @@
-import { redBright } from "chalk"
 import { FastifyInstance } from "fastify"
 import { Logger } from "winston"
 import { withFasteer } from "./helpers"
+import { useControllers } from "./hooks/useControllers"
 import Fasteer from "./types/fasteer"
 
 export class FasteerInstance<
@@ -9,36 +9,44 @@ export class FasteerInstance<
 > {
   private fastifyInstance: TFastify
 
-  private fastifyPort: number
-  private fastifyHost: string
-
   public logger: Logger
+  private config: Fasteer.Config
+
+  private _controllerContext: { [key: string]: any } = {}
+  private _plugins: ((fasteer: this) => any)[] = []
 
   constructor(
     fastify: TFastify,
-    { port, host, logger }: Fasteer.ConstructorOptions
+    { config, logger }: Fasteer.ConstructorOptions
   ) {
-    this.fastifyPort = Number(port)
-    this.fastifyHost = host
-
     this.fastifyInstance = fastify
+
     this.logger = logger
+    this.config = config
+
     console.log(withFasteer("Created Fasteer Instance"))
   }
 
-  async listen() {
+  private initControllers() {
+    this.fastifyInstance.register(useControllers, {
+      controllers: this.config.controllers,
+      globalPrefix: this.config.globalPrefix,
+      context: () => this._controllerContext,
+    })
+  }
+
+  private async initPlugins() {
+    for (const plugin of this._plugins) {
+      await plugin(this)
+    }
+  }
+
+  async start() {
     try {
-      const address = await this.fastifyInstance.listen(
-        this.fastifyPort,
-        this.fastifyHost
-      )
-      console.info(withFasteer("Started Fastify at", address))
-      return address
+      this.initControllers()
+      await this.initPlugins()
+      await this.fastifyInstance.listen(this.config.port, this.config.host)
     } catch (e) {
-      console.error(
-        withFasteer(redBright("Cannot start Fastify, error:", e.message))
-      )
-      console.log({ e })
       throw e
     }
   }
@@ -48,11 +56,19 @@ export class FasteerInstance<
   }
 
   public getPort() {
-    return this.fastifyPort
+    return this.config.port
   }
 
   public getHost() {
-    return this.fastifyHost
+    return this.config.host
+  }
+
+  public ctx<TVal extends any = any>(key: string, value: TVal) {
+    this._controllerContext[key] = value
+  }
+
+  public plugin(fn: (fasteer: this) => any) {
+    this._plugins.push(fn)
   }
 
   public getLogger() {

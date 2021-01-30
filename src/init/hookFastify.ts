@@ -1,7 +1,6 @@
 import fastify from "fastify"
 import fastifyCors from "fastify-cors"
 import fastifyHelmet from "fastify-helmet"
-import { useControllers } from "../hooks/useControllers"
 import Fasteer from "../types/fasteer"
 import WinstonFactory from "../factory/WinstonFactory"
 import { FasteerFactory } from "../factory/FasteerFactory"
@@ -13,24 +12,16 @@ import { withFasteer } from "../helpers"
  *
  * Hooks Fasteer to Fastify and creates new FasteerInstance
  */
-export const hookFastify = (
-  {
-    controllers = [],
-    controllerContext = {},
-    globalPrefix = "/",
+export const hookFastify = (config: Fasteer.Config, app = fastify()) => {
+  let {
     cors = false,
     helmet = false,
     errorHandler,
     development = false,
-    port,
-    host = "127.0.0.1",
     loggerOptions,
     logRequests,
     logErrors = true,
-  }: Fasteer.Config,
-  app = fastify()
-) => {
-  port = Number(port)
+  } = config
 
   if (!app) app = fastify()
   const logger = WinstonFactory.create(loggerOptions)
@@ -42,7 +33,11 @@ export const hookFastify = (
       ? errorHandler
       : (err, req, res) => {
           logger.error(
-            withFasteer("Error occurred processing route", req.method, req.url)
+            withFasteer(
+              "Error occurred while processing route",
+              req.method,
+              req.url
+            )
           )
 
           if (logErrors) logger.error(withFasteer(err.stack))
@@ -82,11 +77,8 @@ export const hookFastify = (
     console.log(withFasteer("Registering a Request Logger hook"))
     app.register(useWinston, { winston: logger })
   }
-  app.register(useControllers, {
-    controllers,
-    globalPrefix,
-    context: controllerContext,
-  })
 
-  return FasteerFactory.create(app, { port, host, logger })
+  const fasteerInstance = FasteerFactory.create(app, { config, logger })
+
+  return fasteerInstance
 }

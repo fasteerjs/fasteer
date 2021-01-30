@@ -84,7 +84,7 @@ export namespace Fasteer {
   }
 
   export interface Ctx<TContext extends object> {
-    ctx: TContext
+    ctx: () => TContext
   }
 
   /**
@@ -92,8 +92,7 @@ export namespace Fasteer {
    * @internal
    */
   export interface ConstructorOptions {
-    port: number | string
-    host: string
+    config: Config
     logger: Logger
   }
 
@@ -103,7 +102,7 @@ export namespace Fasteer {
   export interface UseControllers {
     controllers: string | ControllerImport | (string | ControllerImport)[]
     globalPrefix?: string
-    context: object
+    context: () => object
   }
 
   /**
