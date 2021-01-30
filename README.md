@@ -254,26 +254,30 @@ controllers: [
 <br>
 
 ```ts
-controllerPrefix?: object
+controllerContext?: object
 ```
 
-You can set a context to all controllers, which controllers can access
-via the ctx property in the second param.
+Sets the default controllerContext, which can later be mutated via `fasteer.ctx(key, value)`
 
 Example:
 
 ```ts
-// main.ts
-const controllerContext = {
-  hello: "world",
+interface ControllerContext {
+  hello: string
+  addedProperty?: string
 }
 
-export type ControllerContext = typeof controllerContext
+// main.ts
+const controllerContext: ControllerContext = {
+  hello: "world",
+}
 
 const fasteer = hookFastify({
   controllers: ["YourController.ts"],
   controllerContext,
 })
+
+fasteer.ctx("addedProperty", "addedValue")
 
 // YourController.ts
 const Controller: Fasteer.FCtrl = (
@@ -282,6 +286,9 @@ const Controller: Fasteer.FCtrl = (
 ) => {
   console.log(ctx.hello)
   // "world"
+
+  if (ctx.addedProperty) console.log(ctx.addedProperty)
+  // "addedValue"
 }
 ```
 
