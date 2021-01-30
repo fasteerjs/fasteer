@@ -28,8 +28,8 @@ const fasteer = hookFastify({
 })
 
 fasteer
-  .listen()
-  .then(address => console.log("Fasteer started!"))
+  .start()
+  .then(address => console.log("Fasteer started at", address))
   .catch(error => console.log(error))
 ```
 
