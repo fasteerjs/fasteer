@@ -198,6 +198,34 @@ module.exports = ctrl(fastify => {
 }, "/require-js")
 ```
 
+## FasteerInstance
+
+This is the main instance of Fasteer and what `hookFastify()` returns.
+
+### `FasteerInstance.start()`
+
+Registers plugins, controllers and starts Fastify.
+
+### `FasteerInstance.getPort()`
+
+Returns the port of the Fastify server.
+
+### `FasteerInstance.getHost()`
+
+Returns the hostname of the Fastify server.
+
+### `FasteerInstance.ctx<TVal extends any = any>(key: string, value: TVal)`
+
+Mutates the Controller Context.
+
+### `FasteerInstance.plugin(fn: (fasteer: FasteerInstance) => any)`
+
+Registers a plugin. **It must be registered before the FasteerInstance.start() function is called**.
+
+### `FasteerInstance.getLogger()`
+
+Returns the Winston logger (`FasteerInstance.logger`).
+
 ## Available Options
 
 These are all the available configuration options.
