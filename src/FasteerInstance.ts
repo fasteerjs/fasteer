@@ -33,19 +33,24 @@ export class FasteerInstance<
       globalPrefix: this.config.globalPrefix,
       context: () => this._controllerContext,
     })
+    return this
   }
 
   private async initPlugins() {
     for (const plugin of this._plugins) {
       await plugin(this)
     }
+    return this
   }
 
   async start() {
     try {
       this.initControllers()
       await this.initPlugins()
-      await this.fastifyInstance.listen(this.config.port, this.config.host)
+      return await this.fastifyInstance.listen(
+        this.config.port,
+        this.config.host
+      )
     } catch (e) {
       throw e
     }
@@ -63,12 +68,14 @@ export class FasteerInstance<
     return this.config.host
   }
 
-  public ctx<TVal extends any = any>(key: string, value: TVal) {
-    this._controllerContext[key] = value
+  public ctx<TVal extends any = any>(key: string, value?: TVal) {
+    if (value !== undefined) this._controllerContext[key] = value
+    return value !== undefined ? this : this._controllerContext[key]
   }
 
   public plugin(fn: (fasteer: this) => any) {
     this._plugins.push(fn)
+    return this
   }
 
   public getLogger() {
