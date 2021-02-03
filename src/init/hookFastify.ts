@@ -80,5 +80,9 @@ export const hookFastify = (config: Fasteer.Config, app = fastify()) => {
 
   const fasteerInstance = FasteerFactory.create(app, { config, logger })
 
+  fasteerInstance.inject({
+    hello: "world",
+  })
+
   return fasteerInstance
 }

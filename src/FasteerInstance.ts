@@ -80,7 +80,7 @@ export class FasteerInstance<
 
   public ctx<TVal extends any = any>(key: string, value?: TVal) {
     if (value !== undefined) this._controllerContext[key] = value
-    return value !== undefined ? this : this._controllerContext[key]
+    return value !== undefined ? this : (this._controllerContext[key] as TVal)
   }
 
   public plugin(fn: (fasteer: this) => any) {
@@ -88,13 +88,55 @@ export class FasteerInstance<
     return this
   }
 
-  public inject<TVal extends any = any>(key: string, value: TVal) {
+  public inject<TVal extends any = any>(
+    ...[toInject, value]: [string, TVal] | [TVal]
+  ) {
     if (this._started)
       throw new Error(
         withFasteer("Cannot inject once Fasteer has been started!")
       )
-    this._injected[key] = value
-    return this
+
+    const blacklisted = ["ctx", "prefix"]
+
+    if (typeof toInject === "object") {
+      for (const key in toInject) {
+        const val = toInject[key]
+        if (val === undefined)
+          throw new Error(
+            withFasteer(`Need to specify a value for injected key "${key}"`)
+          )
+
+        if (blacklisted.includes(key))
+          throw new Error(
+            `Key "${toInject}" is blacklisted because it's used in Fasteer's internals."`
+          )
+
+        this._injected[key] = val
+      }
+    }
+
+    if (typeof toInject === "string") {
+      if (value === undefined)
+        throw new Error(
+          withFasteer(`Need to specify a value for injected key "${toInject}"`)
+        )
+
+      if (blacklisted.includes(toInject))
+        throw new Error(
+          withFasteer(
+            `Key "${toInject}" is blacklisted because it's used in Fasteer's internals."`
+          )
+        )
+
+      this._injected[toInject] = value
+      return this
+    }
+
+    throw new Error(
+      withFasteer(
+        "Invalid usage of FasteerInstance.inject()! Please read the docs for more info!;"
+      )
+    )
   }
 
   public getLogger() {
