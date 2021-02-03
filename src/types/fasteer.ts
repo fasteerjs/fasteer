@@ -19,9 +19,11 @@ export namespace Fasteer {
    * The ES import() for controllers
    */
   export interface ControllerImport<
-    TFastify extends FastifyInstance = FastifyInstance
+    TFastify extends FastifyInstance = FastifyInstance,
+    TContext extends object = object,
+    TInjected extends object = object
   > {
-    default: (fastify: TFastify, opts: { ctx: any }) => any
+    default: (fastify: TFastify, opts: { ctx: TContext } & TInjected) => any
     routePrefix?: string
     __requireModule?: true
   }
@@ -30,35 +32,19 @@ export namespace Fasteer {
    * Functional Controller
    */
   export type FunctionalController<
-    TFastify extends FastifyInstance = FastifyInstance
-  > = ControllerImport<TFastify>["default"]
-
-  /**
-   * Class Controller
-   *
-   * This is an upcoming feature for Fasteer.js for people that want OOP.
-   * It is not part of Fasteer.js as of now and needs a RFC proposal for Class Controllers.
-   */
-  export interface ClassController<
-    TFastify extends FastifyInstance = FastifyInstance
-  > {
-    fastify: TFastify
-    constructor: (fastify: TFastify) => never
-  }
+    TFastify extends FastifyInstance = FastifyInstance,
+    TContext extends object = object,
+    TInjected extends object = object
+  > = ControllerImport<TFastify, TContext, TInjected>["default"]
 
   /**
    * Alias for Fasteer.FunctionalController
    */
   export type FCtrl<
-    TFastify extends FastifyInstance = FastifyInstance
-  > = FunctionalController<TFastify>
-
-  /**
-   * Alias for Fasteer.ClassController
-   */
-  export type CCtrl<
-    TFastify extends FastifyInstance = FastifyInstance
-  > = ClassController<TFastify>
+    TFastify extends FastifyInstance = FastifyInstance,
+    TContext extends object = object,
+    TInjected extends object = object
+  > = FunctionalController<TFastify, TContext, TInjected>
 
   /**
    * Configuration for init hookFastify()
@@ -86,9 +72,9 @@ export namespace Fasteer {
   export type Ctx<
     TContext extends object = object,
     TInjected extends object = object
-  > = TInjected & {
+  > = {
     ctx: () => TContext
-  }
+  } & TInjected
 
   /**
    * Options for FasteerInstance.
