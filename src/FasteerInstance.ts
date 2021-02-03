@@ -7,31 +7,37 @@ import Fasteer from "./types/fasteer"
 export class FasteerInstance<
   TFastify extends FastifyInstance = FastifyInstance
 > {
-  private fastifyInstance: TFastify
+  public fastify: TFastify
 
   public logger: Logger
-  private config: Fasteer.Config
+
+  private _config: Fasteer.Config
 
   private _controllerContext: { [key: string]: any } = {}
   private _plugins: ((fasteer: this) => any)[] = []
+
+  private _injected: { [key: string]: any } = {}
+
+  private _started = false
 
   constructor(
     fastify: TFastify,
     { config, logger }: Fasteer.ConstructorOptions
   ) {
-    this.fastifyInstance = fastify
+    this.fastify = fastify
 
     this.logger = logger
-    this.config = config
+    this._config = config
 
     console.log(withFasteer("Created Fasteer Instance"))
   }
 
   private initControllers() {
-    this.fastifyInstance.register(useControllers, {
-      controllers: this.config.controllers,
-      globalPrefix: this.config.globalPrefix,
+    this.fastify.register(useControllers, {
+      controllers: this._config.controllers,
+      globalPrefix: this._config.globalPrefix,
       context: () => this._controllerContext,
+      injected: this._injected,
     })
     return this
   }
@@ -47,25 +53,29 @@ export class FasteerInstance<
     try {
       this.initControllers()
       await this.initPlugins()
-      return await this.fastifyInstance.listen(
-        this.config.port,
-        this.config.host
+
+      const addr = await this.fastify.listen(
+        this._config.port,
+        this._config.host
       )
+      this._started = true
+
+      return addr
     } catch (e) {
       throw e
     }
   }
 
   public getFastify() {
-    return this.fastifyInstance
+    return this.fastify
   }
 
   public getPort() {
-    return this.config.port
+    return this._config.port
   }
 
   public getHost() {
-    return this.config.host
+    return this._config.host
   }
 
   public ctx<TVal extends any = any>(key: string, value?: TVal) {
@@ -75,6 +85,15 @@ export class FasteerInstance<
 
   public plugin(fn: (fasteer: this) => any) {
     this._plugins.push(fn)
+    return this
+  }
+
+  public inject<TVal extends any = any>(key: string, value: TVal) {
+    if (this._started)
+      throw new Error(
+        withFasteer("Cannot inject once Fasteer has been started!")
+      )
+    this._injected[key] = value
     return this
   }
 

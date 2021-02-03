@@ -83,7 +83,10 @@ export namespace Fasteer {
     logErrors?: boolean
   }
 
-  export interface Ctx<TContext extends object> {
+  export type Ctx<
+    TContext extends object = object,
+    TInjected extends object = object
+  > = TInjected & {
     ctx: () => TContext
   }
 
@@ -102,7 +105,8 @@ export namespace Fasteer {
   export interface UseControllers {
     controllers: string | ControllerImport | (string | ControllerImport)[]
     globalPrefix?: string
-    context: () => object
+    context?: () => object
+    injected?: object
   }
 
   /**

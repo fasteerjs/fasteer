@@ -33,7 +33,12 @@ export const ctrl = (controller: F.FCtrl, routePrefix?: string) => ({
 export const useControllers = fp(
   async (
     fastify,
-    { controllers, globalPrefix = "/", context }: F.UseControllers
+    {
+      controllers,
+      globalPrefix = "/",
+      context = () => ({}),
+      injected = {},
+    }: F.UseControllers
   ) => {
     controllers = !(controllers instanceof Array) ? [controllers] : controllers
 
@@ -72,6 +77,7 @@ export const useControllers = fp(
       fastify.register(ctrl.default, {
         prefix: path.join(globalPrefix, ctrl.routePrefix ?? ""),
         ctx: context,
+        ...injected,
       })
 
       console.log(
