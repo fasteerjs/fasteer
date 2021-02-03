@@ -23,7 +23,10 @@ export namespace Fasteer {
     TContext extends object = object,
     TInjected extends object = object
   > {
-    default: (fastify: TFastify, opts: { ctx: TContext } & TInjected) => any
+    default: (
+      fastify: TFastify,
+      opts: { ctx: () => TContext } & TInjected
+    ) => any
     routePrefix?: string
     __requireModule?: true
   }

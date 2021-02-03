@@ -1,11 +1,3 @@
-import { FasteerInstance } from "./FasteerInstance"
-import { useControllers, ctrl } from "./hooks/useControllers"
-import { useWinston } from "./hooks/useWinston"
-import { hookFastify } from "./init/hookFastify"
-import Fasteer from "./types/fasteer"
-import FasteerFactory from "./factory/FasteerFactory"
-import WinstonFactory from "./factory/WinstonFactory"
-
 /**
  * Fasteer.js
  *
@@ -13,13 +5,10 @@ import WinstonFactory from "./factory/WinstonFactory"
  * @author Filip Vottus <vottus@vott.us>
  * @year 2020
  */
-export {
-  Fasteer,
-  FasteerInstance,
-  useControllers,
-  useWinston,
-  hookFastify,
-  FasteerFactory,
-  WinstonFactory,
-  ctrl,
-}
+export * from "./FasteerInstance"
+export * from "./hooks/useControllers"
+export * from "./hooks/useWinston"
+export * from "./init/hookFastify"
+export * from "./types/fasteer"
+export * from "./factory/FasteerFactory"
+export * from "./factory/WinstonFactory"
