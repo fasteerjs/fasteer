@@ -112,6 +112,7 @@ export class FasteerInstance<
           )
 
         this._injected[key] = val
+        return this
       }
     }
 
