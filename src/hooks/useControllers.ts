@@ -78,7 +78,7 @@ export const useControllers = fp(
         prefix: path.join(globalPrefix, ctrl.routePrefix ?? ""),
         ctx: context,
         ...injected,
-      })
+      } as any)
 
       console.log(
         log(

@@ -25,7 +25,7 @@ export namespace Fasteer {
   > {
     default: (
       fastify: TFastify,
-      opts: { ctx: () => TContext } & TInjected
+      opts: { ctx: () => TContext & Context } & TInjected & Injected
     ) => any
     routePrefix?: string
     __requireModule?: true
@@ -109,6 +109,10 @@ export namespace Fasteer {
    * FasteerInstance
    */
   export type Fasteer = FasteerInstance
+
+  export interface Context {}
+
+  export interface Injected {}
 }
 
 export default Fasteer
