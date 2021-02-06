@@ -3,7 +3,7 @@
  *
  * @license MIT
  * @author Filip Vottus <vottus@vott.us>
- * @year 2020
+ * @year 2020-2021
  */
 export * from "./FasteerInstance"
 export * from "./hooks/useControllers"

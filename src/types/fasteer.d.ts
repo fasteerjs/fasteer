@@ -109,10 +109,10 @@ export namespace Fasteer {
    * FasteerInstance
    */
   export type Fasteer = FasteerInstance
-
-  export interface Context {}
-
-  export interface Injected {}
 }
+
+export interface Context {}
+
+export interface Injected {}
 
 export default Fasteer
