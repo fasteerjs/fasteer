@@ -4,7 +4,7 @@ For documentation, see https://fasteer.js.org.
 
 # Credits
 
-2020 &copy; Filip Vottus &ndash; All Rights Reserved
+2020-2021 &copy; Froneb s.r.o. and Filip Vottus &ndash; All Rights Reserved
 
 ## Used Open Source Software
 
