@@ -7,6 +7,7 @@ import {
 import { FastifyCorsOptions } from "fastify-cors"
 import helmet from "helmet"
 import { Logger, LoggerOptions } from "winston"
+import { Context, Injected } from ".."
 import FasteerInstance from "../FasteerInstance"
 
 export type FastifyHelmetOptions = Parameters<typeof helmet>[0]
@@ -110,9 +111,5 @@ export namespace Fasteer {
    */
   export type Fasteer = FasteerInstance
 }
-
-export interface Context {}
-
-export interface Injected {}
 
 export default Fasteer
