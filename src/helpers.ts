@@ -62,6 +62,7 @@ export const formatJson = (
       if (/^"/.test(match)) type = /:$/.test(match) ? "key" : "string"
       else if (/true|false/.test(match)) type = "boolean"
       else if (/null|undefined/.test(match)) type = "null"
+      else if (/[0-9]/.test(match)) type = "number"
 
       return formatMatch(match, type)
     }

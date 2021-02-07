@@ -54,7 +54,7 @@ export namespace Fasteer {
    */
   export interface Config {
     controllers: UseControllers["controllers"]
-    controllerContext?: object
+    controllerContext?: { [key: string]: unknown }
     globalPrefix?: string
     cors?: boolean | FastifyCorsOptions
     helmet?: boolean | FastifyHelmetOptions

@@ -7,13 +7,11 @@ import Fasteer from "./types/fasteer"
 export class FasteerInstance<
   TFastify extends FastifyInstance = FastifyInstance
 > {
-  public fastify: TFastify
-
   public logger: Logger
 
   private _config: Fasteer.Config
 
-  private _controllerContext: { [key: string]: any } = {}
+  private _controllerContext: { [key: string]: unknown } = {}
   private _plugins: ((fasteer: this) => any)[] = []
 
   private _injected: { [key: string]: any } = {}
@@ -21,13 +19,12 @@ export class FasteerInstance<
   private _started = false
 
   constructor(
-    fastify: TFastify,
+    private fastify: TFastify,
     { config, logger }: Fasteer.ConstructorOptions
   ) {
-    this.fastify = fastify
-
     this.logger = logger
     this._config = config
+    this._controllerContext = config.controllerContext ?? {}
 
     console.log(withFasteer("Created Fasteer Instance"))
   }
@@ -50,20 +47,13 @@ export class FasteerInstance<
   }
 
   async start() {
-    try {
-      this.initControllers()
-      await this.initPlugins()
+    this.initControllers()
+    await this.initPlugins()
 
-      const addr = await this.fastify.listen(
-        this._config.port,
-        this._config.host
-      )
-      this._started = true
+    const addr = await this.fastify.listen(this._config.port, this._config.host)
+    this._started = true
 
-      return addr
-    } catch (e) {
-      throw e
-    }
+    return addr
   }
 
   public getFastify() {
@@ -76,6 +66,10 @@ export class FasteerInstance<
 
   public getHost() {
     return this._config.host
+  }
+
+  public hasStarted() {
+    return this._started
   }
 
   public ctx<TVal extends any = any>(key: string, value?: TVal) {
@@ -135,7 +129,7 @@ export class FasteerInstance<
 
     throw new Error(
       withFasteer(
-        "Invalid usage of FasteerInstance.inject()! Please read the docs for more info!;"
+        "Invalid usage of FasteerInstance.inject()! Please read the docs for more info!"
       )
     )
   }
