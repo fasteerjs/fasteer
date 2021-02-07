@@ -29,13 +29,18 @@
     "fastify-helmet": "^5.0.3",
     "glob": "^7.1.6",
     "helmet": "^4.2.0",
+    "husky": "^5.0.8",
+    "pinst": "^2.1.4",
     "winston": "^3.3.3"
   },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint",
     "compile": "tsc",
+    "postinstall": "husky install",
+    "prepublishOnly": "pinst --disable",
     "prepublish": "yarn format && yarn lint && yarn compile && yarn test",
+    "postpublish": "pinst --enable",
     "test": "tap tests/"
   },
   "devDependencies": {
