@@ -85,7 +85,11 @@ t.test("FasteerInstance", async t => {
     fasteer.inject({ fasteer: "is cool" })
     t.equals((fasteer as any)._injected["fasteer"], "is cool")
     ;(fasteer as any)._started = true
-    t.throws(() => fasteer.inject({}))
+    t.throws(
+      () => fasteer.inject({}),
+      undefined,
+      "Cannot inject once Fasteer has been started!"
+    )
     ;(fasteer as any)._started = false
   })
 
