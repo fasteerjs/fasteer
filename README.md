@@ -1,6 +1,6 @@
 # Fasteer.js
 
-For documentation, see https://fasteer.js.org.
+The documentation is coming soon, see https://fasteer.js.org. (for 1.x docs, see [1.x README](https://github.com/fasteerjs/fasteer/blob/1.x/README.md))
 
 # Credits
 
