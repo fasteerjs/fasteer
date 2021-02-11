@@ -19,7 +19,7 @@ export class FasteerInstance<
   private _started = false
 
   constructor(
-    private fastify: TFastify,
+    public fastify: TFastify,
     { config, logger }: Fasteer.ConstructorOptions
   ) {
     this.logger = logger
@@ -106,8 +106,8 @@ export class FasteerInstance<
           )
 
         this._injected[key] = val
-        return this
       }
+      return this
     }
 
     if (typeof toInject === "string") {
