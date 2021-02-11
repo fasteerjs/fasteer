@@ -82,8 +82,15 @@ t.test("FasteerInstance", async t => {
     fasteer.inject("hey", "hello")
     t.equals((fasteer as any)._injected["hey"], "hello")
 
-    fasteer.inject({ fasteer: "is cool" })
+    fasteer.inject({
+      fasteer: "is cool",
+      and: "so is not making returns in a forloop",
+    })
     t.equals((fasteer as any)._injected["fasteer"], "is cool")
+    t.equals(
+      (fasteer as any)._injected["and"],
+      "so is not making returns in a forloop"
+    )
     ;(fasteer as any)._started = true
     t.throws(
       () => fasteer.inject({}),
